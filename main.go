@@ -56,9 +56,17 @@ func configDefault(config ...Config) Config {
 	// this is the main jwt decode function of our middleware
 	if cfg.Decode == nil {
 		// Set default Decode function if not passed
-		cfg.Decode = func(c *fiber.Ctx) (*jwt.MapClaims, error) {
 
-			authHeader := c.Cookies("Token")
+		cfg.Decode = func(c *fiber.Ctx) (*jwt.MapClaims, error) {
+			var authHeader string
+			var tokenJWT string
+			if cfg.Type == "api" {
+				authHeader = c.Get("Authorization")
+				tokenJWT = authHeader[7:]
+			} else {
+				authHeader = c.Cookies("Token")
+				tokenJWT = authHeader
+			}
 
 			if authHeader == "" {
 				return nil, errors.New("Authorization header is required")
@@ -66,7 +74,7 @@ func configDefault(config ...Config) Config {
 
 			// we parse our jwt token and check for validity against our secret
 			token, err := jwt.Parse(
-				authHeader,
+				tokenJWT,
 				func(token *jwt.Token) (interface{}, error) {
 					// verifying our algo
 					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
