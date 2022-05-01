@@ -10,19 +10,23 @@ import (
 )
 
 type Config struct {
+	Type         string                                     //api or web
 	Next         func(c *fiber.Ctx) bool                    // Required
 	Unauthorized fiber.Handler                              // middleware specfic
 	Decode       func(c *fiber.Ctx) (*jwt.MapClaims, error) // middleware specfic
 	Secret       string                                     // middleware specfic
-	Expiry       int64                                      // middleware specfic
+	Expiry       int64
+	Redirect     string // optional if you use Type is Web (Not API)
 }
 
 var ConfigDefault = Config{
+	Type:         "api",
 	Next:         nil,
 	Decode:       nil,
 	Unauthorized: nil,
 	Secret:       "secret",
 	Expiry:       60,
+	Redirect:     "/login",
 }
 
 func configDefault(config ...Config) Config {
@@ -96,7 +100,11 @@ func configDefault(config ...Config) Config {
 	// Set default Unauthorized if not passed
 	if cfg.Unauthorized == nil {
 		cfg.Unauthorized = func(c *fiber.Ctx) error {
-			return c.Redirect("/login")
+			if cfg.Type == "web" {
+				return c.Redirect(cfg.Redirect)
+			} else {
+				return c.SendStatus(fiber.StatusUnauthorized)
+			}
 		}
 	}
 
