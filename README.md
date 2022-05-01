@@ -31,7 +31,7 @@ func main() {
 
  // JWT Middleware
 	app.Use(jwtware.New(jwtware.Config{
-        Type: "api" //optional
+        Type: "api", //optional
         Secret: "YOUR SECRET KEY",
         Redirect: "/login" //optional if you use Type is web
 	}))
