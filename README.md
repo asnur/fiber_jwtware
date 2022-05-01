@@ -1,8 +1,6 @@
-
 # JWT Middleware For Go Fiber
 
 This library is to make it easier for you to limit access rights, especially using Json Web Token
-
 
 ## Installation
 
@@ -12,13 +10,11 @@ To Install JWT Middaleware Run
   go get github.com/asnur/fiber_jwtware
 ```
 
-
 ## Features
 
 - Set Cookie For Web Route
 - Restricred Web Route
 - Dynamic For Route Web or Api
-
 
 ## Usage/Examples
 
@@ -35,9 +31,9 @@ func main() {
 
  // JWT Middleware
 	app.Use(jwtware.New(jwtware.Config{
-        Type: "api" //optional 
-		Secret: "YOUR SECRET KEY",
-        Redirect "/login" //optional if you use Type is web
+        Type: "api" //optional
+		    Secret: "YOUR SECRET KEY",
+        Redirect: "/login" //optional if you use Type is web
 	}))
 
 //Restricted Route
@@ -46,4 +42,3 @@ func main() {
 //Other your routes
 }
 ```
-
